@@ -1,15 +1,22 @@
 import express, { response } from 'express';
+import bodyParser from 'body-parser';
+import fileUpload from 'express-fileupload';
 
 var app = express();
-app.use(
-    // parse all requests regardless of content-type
-    express.json({ type: "*/*" })
-);
 
 app.use(express.static('public'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(fileUpload({
+    createParentPath: true,
+    limits: {
+        fileSize: 2 * 1024 * 1024 * 1024 //2MB max file(s) size
+    },
+}));
 
 // Import routes defined elsewhere
 require('./src/controllers/root')(app);
+require('./src/controllers/upload')(app);
 
 const PORT = process.env.PORT || '3000';
 app.listen(PORT, () => {
