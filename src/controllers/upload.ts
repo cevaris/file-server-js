@@ -10,11 +10,18 @@ module.exports = (app: express.Express) => {
                     message: 'No file uploaded'
                 });
             } else {
+                const file: fileUpload.UploadedFile = (req.files.constructor == Array) ?
+                    (<fileUpload.UploadedFile[]>req.files.file)[0] :
+                    (<fileUpload.UploadedFile>req.files.file);
+
+                // const file = req.files.file && (req.files.file instanceof fileUpload.UploadedFile[]) ? 
+                //     req.files.file[] : req.files.fil
+
                 //Use the name of the input field (i.e. "file") to retrieve the uploaded file
-                const file: fileUpload.UploadedFile = req.files.file;
-                
+                // const file: fileUpload.UploadedFile | fileUpload.UploadedFile[] = req.files.file;
+
                 //Use the mv() method to place the file in upload directory (i.e. "uploads")
-                file.mv('./public/' + file.name);
+                file.mv('./public/files/' + file.name);
 
                 //send response
                 res.send({
