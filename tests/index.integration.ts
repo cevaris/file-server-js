@@ -12,12 +12,11 @@ afterAll(() => {
 
 describe('file-server', () => {
     it('is running', async () => {
-        await request(server)
-            .get('/')
-            .then((resp) => {
-                expect(resp.status).toBe(200);
-                expect(resp.text).toBe('File Server\n')
-            });
+        const resp = await request(server)
+            .get('/');
+
+        expect(resp.status).toBe(200);
+        expect(resp.text).toBe('File Server\n')
     });
 
     it('can fetch file', async () => {
