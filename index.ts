@@ -1,5 +1,5 @@
-import express, { response } from 'express';
 import bodyParser from 'body-parser';
+import express from 'express';
 import fileUpload from 'express-fileupload';
 
 var app = express();
@@ -19,6 +19,8 @@ require('./src/controllers/root')(app);
 require('./src/controllers/upload')(app);
 
 const PORT = process.env.PORT || '3000';
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`)
 });
+
+module.exports = server;

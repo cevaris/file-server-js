@@ -1,14 +1,20 @@
 # File Server JS
 File HTTP Server
 
+** Compile on file change **
 ./node_modules/.bin/tsc --w
+
+** Start Local Server **
 npm start
 
-curl -v localhost:3000/
-curl -v -X POST -F "file=@$HOME/Desktop/clouds.jpg" localhost:3000/upload/
+** Run integration tests **
+npm run test-integration
 
-curl -v -X POST -F "file=@$HOME/Desktop/clouds.jpg" https://calm-anchorage-06829.herokuapp.com/upload/
-open https://calm-anchorage-06829.herokuapp.com/clouds.jpg
+curl -v localhost:3000/
+curl -v -X POST -F "file=@$HOME/Desktop/clouds.jpg" localhost:3000/files/upload.json
+
+curl -v -X POST -F "file=@$HOME/Desktop/clouds.jpg" https://calm-anchorage-06829.herokuapp.com/files/upload.json
+open https://calm-anchorage-06829.herokuapp.com/files/clouds.jpg
 
 
 ### Resources

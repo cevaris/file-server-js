@@ -2,7 +2,7 @@ import express from 'express';
 import fileUpload from 'express-fileupload';
 
 module.exports = (app: express.Express) => {
-    app.post('/upload', (req: express.Request, res: express.Response) => {
+    app.post('/files/upload.json', (req: express.Request, res: express.Response) => {
         try {
             if (!req.files) {
                 res.send({
@@ -10,7 +10,7 @@ module.exports = (app: express.Express) => {
                     message: 'No file uploaded'
                 });
             } else {
-                
+
                 // Use the name of the input field (i.e. "file") to retrieve the uploaded file
                 // Check the req.files.file type, and only get the first file
                 const file: fileUpload.UploadedFile = (req.files.constructor == Array) ?
