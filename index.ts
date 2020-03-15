@@ -1,8 +1,9 @@
 import bodyParser from 'body-parser';
 import express from 'express';
 import fileUpload from 'express-fileupload';
+import http from 'http';
 
-var app = express();
+const app: express.Express = express();
 
 app.use(express.static('public'));
 // app.use(bodyParser.json());
@@ -19,8 +20,8 @@ require('./src/controllers/root')(app);
 require('./src/controllers/upload')(app);
 
 const PORT = process.env.PORT || '3000';
-const server = app.listen(PORT, () => {
+const server: http.Server = app.listen(PORT, () => {
     console.log(`Example app listening on port ${PORT}!`)
 });
 
-module.exports = server;
+export default server;
