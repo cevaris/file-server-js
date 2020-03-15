@@ -62,3 +62,6 @@ typings/
 
 build
 dist
+
+# ignore test file
+public/files/test.txt
