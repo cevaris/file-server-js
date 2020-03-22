@@ -1,8 +1,11 @@
 import express from 'express';
 import fileUpload from 'express-fileupload';
+import fs from 'fs';
 
 module.exports = (app: express.Express) => {
-    app.post('/files/upload.json', (req: express.Request, res: express.Response) => {
+    app.use(express.static('public'));
+
+    app.post('/files.json', (req: express.Request, res: express.Response) => {
         try {
             if (!req.files) {
                 res.send({
@@ -31,6 +34,17 @@ module.exports = (app: express.Express) => {
                     }
                 });
             }
+        } catch (err) {
+            res.status(500).send(err);
+        }
+    });
+
+    app.delete('/files/:fileName', async (req: express.Request, res: express.Response) => {
+        try {
+            const fileName = req.params.fileName
+            console.log(`deleting ${fileName}`);
+            await fs.promises.unlink(`./public/files/${fileName}`)
+            res.send(200);
         } catch (err) {
             res.status(500).send(err);
         }

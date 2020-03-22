@@ -5,7 +5,6 @@ import http from 'http';
 
 const app: express.Express = express();
 
-app.use(express.static('public'));
 // app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(fileUpload({
@@ -17,7 +16,7 @@ app.use(fileUpload({
 
 // Import routes defined elsewhere
 require('./src/controllers/root')(app);
-require('./src/controllers/upload')(app);
+require('./src/controllers/files')(app);
 
 const PORT = process.env.PORT || '3000';
 const server: http.Server = app.listen(PORT, () => {

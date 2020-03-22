@@ -40,7 +40,7 @@ describe('file-server', () => {
         await fs.promises.writeFile(filePath, uuid);
 
         const uploadResp = await request(server)
-            .post('/files/upload.json')
+            .post('/files.json')
             .attach('file', filePath);
         expect(uploadResp.status).toBe(200);
         expect(uploadResp.body.status).toBe(true);
@@ -49,5 +49,23 @@ describe('file-server', () => {
             .get('/files/test.txt');
         expect(getResponse.status).toBe(200);
         expect(getResponse.text).toBe(uuid);
+    });
+
+    it('can delete a file', async () => {
+        // use a new UUID for every test run
+        const uuid = v4();
+
+        const filePath = `/tmp/test2.txt`;
+        await fs.promises.writeFile(filePath, uuid);
+
+        const uploadResp = await request(server)
+            .post('/files.json')
+            .attach('file', filePath);
+        expect(uploadResp.status).toBe(200);
+        expect(uploadResp.body.status).toBe(true);
+
+        const deleteResponse = await request(server)
+            .delete('/files/test2.txt');
+        expect(deleteResponse.status).toBe(200);
     });
 });
