@@ -1,14 +1,11 @@
 import { MongoClient, Db } from "mongodb"
+import { Closable } from ".";
 
 export abstract class FilesClient implements Closable {
     abstract close(): Promise<void>
     abstract all(): Promise<ServerFile[]>
     abstract save(file: ServerFile): Promise<void>
     abstract delete(fileName: string): Promise<void>
-}
-
-export type Closable = {
-    close(): Promise<void>;
 }
 
 export class FilesClientBuilder {

@@ -2,23 +2,23 @@ import fs from 'fs';
 import http from 'http';
 import request from 'supertest';
 import { v4 } from 'uuid';
-// import { server, filesClient } from '../index';
 import { app } from '../app';
-
+import { MongoDB } from '../src/clients/mongodb';
 
 let server: http.Server;
 beforeAll((done) => {
     // server does not get shutdown properly
     // https://github.com/facebook/jest/issues/6907
     server = app.listen(done);
+    server.on('close', () => {
+        MongoDB.close();
+    });
 })
 
 // after all test are executed, shutdown server
-afterAll((done) => {
-    // await filesClient.close();
+afterAll(async (done) => {
     server.close(done);
 });
-
 
 describe('file-server', () => {
     it('is running', async () => {
@@ -27,6 +27,14 @@ describe('file-server', () => {
 
         expect(resp.status).toBe(200);
         expect(resp.text).toBe('File Server\n')
+    });
+
+    it('count uploaded files', async () => {
+        const resp = await request(server)
+            .get('/files.json');
+
+        expect(resp.status).toBe(200);
+        expect(resp.text).toBe('0')
     });
 
     it('can fetch file', async () => {

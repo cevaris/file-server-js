@@ -1,9 +1,17 @@
 import express from 'express';
 import fileUpload from 'express-fileupload';
 import fs from 'fs';
+import { MongoDB } from '../clients/mongodb';
 
 module.exports = (app: express.Express) => {
     app.use(express.static('public'));
+
+    app.get('/files.json',  async (req: express.Request, res: express.Response) => {
+        const mongoDB = await MongoDB.getInstance();
+        const fileServerDB = mongoDB.db('fileServerDb');
+        const count = await fileServerDB.collection('files').countDocuments();
+        res.send(count.toString());
+    });
 
     app.post('/files.json', (req: express.Request, res: express.Response) => {
         try {
