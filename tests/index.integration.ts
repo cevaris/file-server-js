@@ -1,16 +1,24 @@
-// choose a custom port to run integ tests on
-process.env.PORT = '3333';
-
 import fs from 'fs';
+import http from 'http';
 import request from 'supertest';
 import { v4 } from 'uuid';
-import { server, filesClient } from '../index';
+// import { server, filesClient } from '../index';
+import { app } from '../app';
+
+
+let server: http.Server;
+beforeAll((done) => {
+    // server does not get shutdown properly
+    // https://github.com/facebook/jest/issues/6907
+    server = app.listen(done);
+})
 
 // after all test are executed, shutdown server
-afterAll(async () => {
-    await filesClient.close();
-    server.close();
+afterAll((done) => {
+    // await filesClient.close();
+    server.close(done);
 });
+
 
 describe('file-server', () => {
     it('is running', async () => {
