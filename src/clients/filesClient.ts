@@ -1,22 +1,9 @@
 import { MongoClient, Db } from "mongodb"
-import { Closable } from ".";
 
-export abstract class FilesClient implements Closable {
-    abstract close(): Promise<void>
+export abstract class FilesClient {
     abstract all(): Promise<ServerFile[]>
     abstract save(file: ServerFile): Promise<void>
     abstract delete(fileName: string): Promise<void>
-}
-
-export class FilesClientBuilder {
-    private static instance: FilesClient;
-
-    static getInstance(mongoDB: MongoClient): FilesClient {
-        if (!FilesClientBuilder.instance) {
-            FilesClientBuilder.instance = new MongoDBFilesClient(mongoDB);
-        }
-        return FilesClientBuilder.instance;
-    }
 }
 
 class MongoDBFilesClient implements FilesClient {
@@ -28,9 +15,6 @@ class MongoDBFilesClient implements FilesClient {
         this.filesServerDb = mongoDB.db("fileServerDb");
     }
 
-    close(): Promise<void> {
-        return this.mongoDB.close();
-    }
     all(): Promise<ServerFile[]> {
 
         throw new Error("Method not implemented.");
