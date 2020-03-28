@@ -67,5 +67,8 @@ describe('file-server', () => {
         const deleteResponse = await request(server)
             .delete('/files/test2.txt');
         expect(deleteResponse.status).toBe(200);
+
+        const exists = await fs.existsSync('public/files/test2.txt');
+        expect(exists).toBe(false);
     });
 });
