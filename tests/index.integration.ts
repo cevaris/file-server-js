@@ -4,11 +4,11 @@ process.env.PORT = '3333';
 import fs from 'fs';
 import request from 'supertest';
 import { v4 } from 'uuid';
-import server from '../index';
-
+import { server, filesClient } from '../index';
 
 // after all test are executed, shutdown server
-afterAll(() => {
+afterAll(async () => {
+    await filesClient.close();
     server.close();
 });
 

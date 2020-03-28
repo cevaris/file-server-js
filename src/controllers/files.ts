@@ -44,7 +44,7 @@ module.exports = (app: express.Express) => {
             const fileName = req.params.fileName;
             console.log(`deleting ${fileName}`);
             await fs.promises.unlink(`./public/files/${fileName}`);
-            res.send(200);
+            res.sendStatus(200);
         } catch (err) {
             res.status(500).send(err);
         }
