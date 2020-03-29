@@ -2,8 +2,7 @@ class SecretsStore {
     MongoURI: string;
 
     constructor() {
-        const baseURI = process.env.MONGODB_URI || 'mongodb://localhost';
-        this.MongoURI = `${baseURI}/fileServerDb`;
+        this.MongoURI = process.env.MONGODB_URI || 'mongodb://localhost';
     }
 }
 

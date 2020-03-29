@@ -1,7 +1,7 @@
 import express from 'express';
 import fileUpload from 'express-fileupload';
 import fs from 'fs';
-import { FilesClient } from '../clients/filesClient';
+import { FilesClient } from '../repositories/filesClient';
 
 module.exports = (app: express.Express) => {
     app.use(express.static('public'));

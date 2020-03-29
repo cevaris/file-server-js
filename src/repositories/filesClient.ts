@@ -15,18 +15,19 @@ class MongoDBFilesClient implements FilesClient {
     }
 
     async save(file: ServerFile): Promise<void> {
-        const mongodb = MongoDB.getInstance();
-        throw new Error("Method not implemented.");
+        const filesClient = await this.client();
+        await filesClient.save(file);
     }
 
     async delete(fileName: string): Promise<void> {
-        throw new Error("Method not implemented.");
+        const filesClient = await this.client();
+        await filesClient.remove({ name: fileName });
     }
 
-    private async client(): Promise<Collection> {
+    private async client(): Promise<Collection<ServerFile>> {
         const mongodb = await MongoDB.getInstance();
         const database = mongodb.db('fileServerDb');
-        const collection = database.collection('files');
+        const collection = database.collection<ServerFile>('files');
         return collection;
     }
 }

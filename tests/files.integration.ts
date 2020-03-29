@@ -3,7 +3,7 @@ import http from 'http';
 import request from 'supertest';
 import { v4 } from 'uuid';
 import { app } from '../app';
-import { MongoDB } from '../src/clients/mongodb';
+import { MongoDB } from '../src/repositories/mongodb';
 
 let server: http.Server;
 beforeAll((done) => {
