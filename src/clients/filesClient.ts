@@ -1,28 +1,33 @@
-import { MongoClient, Db } from "mongodb"
+import { Collection } from "mongodb";
+import { MongoDB } from "./mongodb";
+import { ServerFile } from "../models/serverFile";
 
-export abstract class FilesClient {
-    abstract all(): Promise<ServerFile[]>
-    abstract save(file: ServerFile): Promise<void>
-    abstract delete(fileName: string): Promise<void>
+export type FilesClient = {
+    all(): Promise<ServerFile[]>
+    save(file: ServerFile): Promise<void>
+    delete(fileName: string): Promise<void>
 }
 
 class MongoDBFilesClient implements FilesClient {
-    private mongoDB: MongoClient;
-    private filesServerDb: Db;
-
-    constructor(mongoDB: MongoClient) {
-        this.mongoDB = mongoDB;
-        this.filesServerDb = mongoDB.db("fileServerDb");
-    }
-
-    all(): Promise<ServerFile[]> {
-
+    async all(): Promise<ServerFile[]> {
+        // const filesClient = await this.client();
+        // return filesClient.find().toArray();
         throw new Error("Method not implemented.");
     }
-    save(file: ServerFile): Promise<void> {
+
+    async save(file: ServerFile): Promise<void> {
+        const mongodb = MongoDB.getInstance();
         throw new Error("Method not implemented.");
     }
-    delete(fileName: string): Promise<void> {
+
+    async delete(fileName: string): Promise<void> {
         throw new Error("Method not implemented.");
     }
+
+    // private async client(): Promise<Collection> {
+    //     const mongodb = await MongoDB.getInstance();
+    //     // const database = mongodb.db('fileServerDb');
+    //     // const collection = database.collection('files');
+    //     return collection;
+    // }
 }

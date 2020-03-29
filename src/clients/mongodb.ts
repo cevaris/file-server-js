@@ -1,18 +1,26 @@
-import { MongoClient } from "mongodb";
+import mongoose from "mongoose";
 import Secrets from "../secrets";
 
 export class MongoDB {
-    static instance: MongoClient;
+    static instance: mongoose.Mongoose;
 
-    static async getInstance(): Promise<MongoClient> {
+    static async getInstance(): Promise<mongoose.Mongoose> {
         if(!MongoDB.instance){
-            const MongoDBOptions = { useUnifiedTopology: true };
-            MongoDB.instance = await MongoClient.connect(Secrets.MongoURI, MongoDBOptions);
+            try {
+                const MongoDBOptions = { useUnifiedTopology: true };
+                MongoDB.instance = await mongoose.connect(Secrets.MongoURI);
+            } catch (err) {
+                console.error(err);
+            }
         }
         return Promise.resolve(MongoDB.instance);
     }
 
     static async close(): Promise<void> {
-        MongoDB.instance.close();
+        if(MongoDB.instance){
+            return MongoDB.instance.connection.close();
+        } else {
+            return Promise.resolve();
+        }
     }
 }
