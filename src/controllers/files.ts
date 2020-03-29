@@ -9,7 +9,7 @@ module.exports = (app: express.Express) => {
     app.get('/files.json',  async (req: express.Request, res: express.Response) => {
         // const mongoDB = await MongoDB.getInstance();
         // const count = await mongoDB.collection('files').countDocuments();
-        const count = await Promise.resolve(0);
+        const count = await Mon
         res.send(count.toString());
     });
 
