@@ -3,21 +3,27 @@ import http from 'http';
 import request from 'supertest';
 import { v4 } from 'uuid';
 import { app } from '../app';
-import { MongoDB } from '../src/clients/mongodb';
+import { MongoDB } from '../src/repositories/mongodb';
 
 let server: http.Server;
-beforeAll((done) => {
+
+beforeAll(async () => {
     // server does not get shutdown properly
     // https://github.com/facebook/jest/issues/6907
-    server = app.listen(done);
+    server = app.listen();
     server.on('close', () => {
         MongoDB.close();
     });
 })
 
-// after all test are executed, shutdown server
-afterAll(async (done) => {
-    server.close(done);
+beforeEach( async () => {
+    // clear out all existing data before running a new test
+    await MongoDB.deleteAll('fileServerDb', 'files');
+})
+
+afterAll(async () => {
+    // after all test are executed, shutdown server
+    server.close();
 });
 
 describe('file-server', () => {
@@ -34,7 +40,7 @@ describe('file-server', () => {
             .get('/files.json');
 
         expect(resp.status).toBe(200);
-        expect(resp.text).toBe('0')
+        expect(resp.body.files).toHaveLength(0);
     });
 
     it('can fetch file', async () => {

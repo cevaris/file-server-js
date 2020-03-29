@@ -6,7 +6,7 @@
   "scripts": {
     "postinstall": "./node_modules/.bin/tsc",
     "start": "./node_modules/.bin/nodemon dist/index.js",
-    "test-integration": "jest -c jest.config.integration.js --detectOpenHandles",
+    "test-integration": "jest -c jest.config.integration.js --detectOpenHandles --runInBand",
     "test": "jest --detectOpenHandles"
   },
   "author": "",
@@ -16,16 +16,12 @@
     "@types/express-fileupload": "^1.1.2",
     "@types/mongodb": "^3.5.4",
     "body-parser": "^1.19.0",
-    "cors": "^2.8.5",
     "dotenv-flow": "^3.1.0",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.6",
-    "lodash": "^4.17.15",
-    "mongodb": "^3.5.5",
-    "morgan": "^1.9.1"
+    "mongodb": "^3.5.5"
   },
   "devDependencies": {
-    "@babel/parser": "^7.8.4",
     "@types/express": "^4.17.1",
     "@types/jest": "^25.1.4",
     "@types/supertest": "^2.0.8",

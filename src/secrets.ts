@@ -1,4 +1,3 @@
-//TODO: convert this to a promise
 class SecretsStore {
     MongoURI: string;
 
