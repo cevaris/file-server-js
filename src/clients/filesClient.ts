@@ -2,7 +2,7 @@ import { Collection } from "mongodb";
 import { MongoDB } from "./mongodb";
 import { ServerFile } from "../models/serverFile";
 
-export type FilesClient = {
+interface FilesClient {
     all(): Promise<ServerFile[]>
     save(file: ServerFile): Promise<void>
     delete(fileName: string): Promise<void>
@@ -11,7 +11,7 @@ export type FilesClient = {
 class MongoDBFilesClient implements FilesClient {
     async all(): Promise<ServerFile[]> {
         const filesClient = await this.client();
-        return filesClient.find().toArray();
+        return filesClient.find({}).toArray();
     }
 
     async save(file: ServerFile): Promise<void> {
@@ -30,3 +30,5 @@ class MongoDBFilesClient implements FilesClient {
         return collection;
     }
 }
+
+export const FilesClient: FilesClient = new MongoDBFilesClient();
