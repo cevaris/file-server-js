@@ -15,4 +15,15 @@ export class MongoDB {
     static async close(): Promise<void> {
         return MongoDB.instance.close();
     }
+
+    /**
+     * Helper method to remove all documents for a given db/collection
+     * @param database Name of MongoDB database
+     * @param collection Name of MongoDB collection
+     */
+    static async deleteAll(database: string, collection: string): Promise<void> {
+        const client = await this.getInstance();
+        await client.db(database).collection(collection).deleteMany({});
+        return Promise.resolve();
+    }
 }

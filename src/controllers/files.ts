@@ -1,17 +1,18 @@
 import express from 'express';
 import fileUpload from 'express-fileupload';
 import fs from 'fs';
-import { FilesClient } from '../repositories/filesClient';
+import { FileMetadataRepository } from '../repositories/filesClient';
+import { FileMetadata } from '../models/serverFile';
 
 module.exports = (app: express.Express) => {
     app.use(express.static('public'));
 
     app.get('/files.json',  async (req: express.Request, res: express.Response) => {
-        const files = await FilesClient.all();
-        res.send(files.length.toString());
+        const files = await FileMetadataRepository.all();
+        res.send({files: files});
     });
 
-    app.post('/files.json', (req: express.Request, res: express.Response) => {
+    app.post('/files.json', async (req: express.Request, res: express.Response) => {
         try {
             if (!req.files) {
                 res.send({
@@ -29,15 +30,19 @@ module.exports = (app: express.Express) => {
                 //Use the mv() method to place the file in upload directory (i.e. "uploads")
                 file.mv('./public/files/' + file.name);
 
+                const fileMetaData: FileMetadata = {
+                    name: file.name,
+                    mimeType: file.mimetype,
+                    size: file.size
+                }
+
+                const files = await FileMetadataRepository.insert(fileMetaData);
+
                 // send response
                 res.send({
                     status: true,
                     message: 'File is uploaded',
-                    data: {
-                        name: file.name,
-                        mimetype: file.mimetype,
-                        size: file.size
-                    }
+                    data: fileMetaData
                 });
             }
         } catch (err) {
@@ -48,8 +53,8 @@ module.exports = (app: express.Express) => {
     app.delete('/files/:fileName', async (req: express.Request, res: express.Response) => {
         try {
             const fileName = req.params.fileName;
-            console.log(`deleting ${fileName}`);
             await fs.promises.unlink(`./public/files/${fileName}`);
+            await FileMetadataRepository.delete(fileName);
             res.sendStatus(200);
         } catch (err) {
             res.status(500).send(err);

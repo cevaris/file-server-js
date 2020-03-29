@@ -1,5 +1,5 @@
-export interface ServerFile {
+export interface FileMetadata {
     name: string;
     mimeType: string;
-    size: string
+    size: number
 }

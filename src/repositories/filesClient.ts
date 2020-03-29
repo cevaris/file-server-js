@@ -1,35 +1,43 @@
-import { Collection } from "mongodb";
+import { Collection, IndexOptions } from "mongodb";
+import { FileMetadata } from "../models/serverFile";
 import { MongoDB } from "./mongodb";
-import { ServerFile } from "../models/serverFile";
 
-interface FilesClient {
-    all(): Promise<ServerFile[]>
-    save(file: ServerFile): Promise<void>
+interface FileMetadataRepository {
+    all(): Promise<FileMetadata[]>
+    insert(file: FileMetadata): Promise<void>
     delete(fileName: string): Promise<void>
 }
 
-class MongoDBFilesClient implements FilesClient {
-    async all(): Promise<ServerFile[]> {
+class FileMetadataRepositoryMongoDB implements FileMetadataRepository {
+    async all(): Promise<FileMetadata[]> {
         const filesClient = await this.client();
-        return filesClient.find({}).toArray();
+        // disable from returning ObjectId
+        const opts = { projection: { _id: 0 } };
+        return filesClient.find({}, opts).toArray();
     }
 
-    async save(file: ServerFile): Promise<void> {
+    async insert(file: FileMetadata): Promise<void> {
         const filesClient = await this.client();
-        await filesClient.save(file);
+        await filesClient.insertOne(file);
     }
 
     async delete(fileName: string): Promise<void> {
         const filesClient = await this.client();
-        await filesClient.remove({ name: fileName });
+        const query = { name: fileName };
+        await filesClient.deleteOne(query);
     }
 
-    private async client(): Promise<Collection<ServerFile>> {
+    private async client(): Promise<Collection<FileMetadata>> {
         const mongodb = await MongoDB.getInstance();
         const database = mongodb.db('fileServerDb');
-        const collection = database.collection<ServerFile>('files');
+        const collection = database.collection<FileMetadata>('files');
+
+        // create "name" index to prevent files name conflicts
+        const indexOpts: IndexOptions = { unique: true, background: true };
+        await collection.createIndex("name", indexOpts);
+
         return collection;
     }
 }
 
-export const FilesClient: FilesClient = new MongoDBFilesClient();
+export const FileMetadataRepository: FileMetadataRepository = new FileMetadataRepositoryMongoDB();
