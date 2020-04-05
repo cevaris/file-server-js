@@ -46,7 +46,7 @@ module.exports = (app: express.Express) => {
             //Use the mv() method to place the file in upload directory (i.e. "uploads")
             file.mv('./public/files/' + file.name);
 
-            await FileMetadataRepository.update(fileMetaData);
+            await FileMetadataRepository.upsert(fileMetaData);
 
             // send response
             res.send({
