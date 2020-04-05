@@ -29,7 +29,7 @@ class FileMetadataRepositoryMongoDB implements FileMetadataRepository {
 
     private async client(): Promise<Collection<FileMetadata>> {
         const mongodb = await MongoDB.getInstance();
-        const database = mongodb.db('fileServerDb');
+        const database = mongodb.db();
         const collection = database.collection<FileMetadata>('files');
 
         // create "name" index to prevent files name conflicts

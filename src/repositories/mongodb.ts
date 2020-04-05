@@ -5,7 +5,7 @@ export class MongoDB {
     static instance: MongoClient;
 
     static async getInstance(): Promise<MongoClient> {
-        if(!MongoDB.instance){
+        if (!MongoDB.instance) {
             const MongoDBOptions = { useUnifiedTopology: true };
             MongoDB.instance = await MongoClient.connect(Config.MongoURI, MongoDBOptions);
         }
