@@ -7,9 +7,17 @@ import { FileMetadata } from '../models/serverFile';
 module.exports = (app: express.Express) => {
     app.use(express.static('public'));
 
-    app.get('/files.json',  async (req: express.Request, res: express.Response) => {
+    app.get('/files.json', async (req: express.Request, res: express.Response) => {
         const files = await FileMetadataRepository.all();
-        res.send({files: files});
+        const filesJson = files.map(f => {
+            return { 
+                file_name: f.name, 
+                mime_type: f.mimeType, 
+                size_bytes: f.size 
+            }
+        })
+
+        res.send({ files: filesJson });
     });
 
     app.post('/files.json', async (req: express.Request, res: express.Response) => {
