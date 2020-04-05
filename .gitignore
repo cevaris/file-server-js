@@ -64,4 +64,4 @@ build
 dist
 
 # ignore test file
-public/files/test.txt
+public/files/

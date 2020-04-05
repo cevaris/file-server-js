@@ -3,6 +3,7 @@ import fileUpload from 'express-fileupload';
 import fs from 'fs';
 import { FileMetadataRepository } from '../repositories/filesClient';
 import { FileMetadata } from '../models/serverFile';
+import { MongoError } from 'mongodb';
 
 module.exports = (app: express.Express) => {
     app.use(express.static('public'));
@@ -10,10 +11,10 @@ module.exports = (app: express.Express) => {
     app.get('/files.json', async (req: express.Request, res: express.Response) => {
         const files = await FileMetadataRepository.all();
         const filesJson = files.map(f => {
-            return { 
-                file_name: f.name, 
-                mime_type: f.mimeType, 
-                size_bytes: f.size 
+            return {
+                file_name: f.name,
+                mime_type: f.mimeType,
+                size_bytes: f.size
             }
         })
 
@@ -21,40 +22,49 @@ module.exports = (app: express.Express) => {
     });
 
     app.post('/files.json', async (req: express.Request, res: express.Response) => {
+        if (!req.files) {
+            res.send({
+                status: false,
+                message: 'No file uploaded'
+            });
+            return;
+        }
+
+        // Use the name of the input field (i.e. "file") to retrieve the uploaded file
+        // Check the req.files.file type, and only get the first file
+        const file: fileUpload.UploadedFile = (req.files.constructor == Array) ?
+            (<fileUpload.UploadedFile[]>req.files.file)[0] :
+            (<fileUpload.UploadedFile>req.files.file);
+
+        const fileMetaData: FileMetadata = {
+            name: file.name,
+            mimeType: file.mimetype,
+            size: file.size
+        }
+
         try {
-            if (!req.files) {
-                res.send({
+            //Use the mv() method to place the file in upload directory (i.e. "uploads")
+            file.mv('./public/files/' + file.name);
+
+            const insert = await FileMetadataRepository.insert(fileMetaData);
+
+            // send response
+            res.send({
+                status: true,
+                message: 'File is uploaded'
+            });
+        } catch (err) {
+            if (err instanceof MongoError) {
+                return res.status(500).send({
                     status: false,
-                    message: 'No file uploaded'
-                });
-            } else {
-
-                // Use the name of the input field (i.e. "file") to retrieve the uploaded file
-                // Check the req.files.file type, and only get the first file
-                const file: fileUpload.UploadedFile = (req.files.constructor == Array) ?
-                    (<fileUpload.UploadedFile[]>req.files.file)[0] :
-                    (<fileUpload.UploadedFile>req.files.file);
-
-                //Use the mv() method to place the file in upload directory (i.e. "uploads")
-                file.mv('./public/files/' + file.name);
-
-                const fileMetaData: FileMetadata = {
-                    name: file.name,
-                    mimeType: file.mimetype,
-                    size: file.size
-                }
-
-                const files = await FileMetadataRepository.insert(fileMetaData);
-
-                // send response
-                res.send({
-                    status: true,
-                    message: 'File is uploaded',
-                    data: fileMetaData
+                    message: err.message
                 });
             }
-        } catch (err) {
-            res.status(500).send(err);
+
+            res.status(500).send({
+                status: false,
+                message: err.message
+            });
         }
     });
 

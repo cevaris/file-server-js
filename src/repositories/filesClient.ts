@@ -33,8 +33,8 @@ class FileMetadataRepositoryMongoDB implements FileMetadataRepository {
         const collection = database.collection<FileMetadata>('files');
 
         // create "name" index to prevent files name conflicts
-        const indexOpts: IndexOptions = { unique: true, background: true };
-        await collection.createIndex("name", indexOpts);
+        // const indexOpts: IndexOptions = { unique: true, background: true };
+        // await collection.createIndex("name", indexOpts);
 
         return collection;
     }

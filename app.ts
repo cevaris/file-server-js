@@ -1,10 +1,6 @@
 import bodyParser from 'body-parser';
-import dotEnv from 'dotenv-flow';
 import express from 'express';
 import fileUpload from 'express-fileupload';
-
-// read in environment variables from .env* files
-dotEnv.config();
 
 export const app: express.Express = express();
 
