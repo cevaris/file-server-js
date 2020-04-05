@@ -1,29 +1,29 @@
+import { MongoDB } from '../src/repositories/mongodb';
+import { v4 } from 'uuid';
 import fs from 'fs';
 import http from 'http';
 import request from 'supertest';
-import { v4 } from 'uuid';
 import { app } from '../app';
-import { MongoDB } from '../src/repositories/mongodb';
 
 let server: http.Server;
 
-beforeAll(async () => {
+beforeAll((done) => {
     // server does not get shutdown properly
     // https://github.com/facebook/jest/issues/6907
-    server = app.listen();
+    server = app.listen(done);
     server.on('close', () => {
         MongoDB.close();
     });
 })
 
-beforeEach( async () => {
+beforeEach(async () => {
     // clear out all existing data before running a new test
     await MongoDB.deleteAll('fileServerDb', 'files');
 })
 
-afterAll(async () => {
+afterAll((done) => {
     // after all test are executed, shutdown server
-    server.close();
+    server.close(done);
 });
 
 describe('file-server', () => {
@@ -41,17 +41,6 @@ describe('file-server', () => {
 
         expect(resp.status).toBe(200);
         expect(resp.body.files).toHaveLength(0);
-    });
-
-    it('can fetch file', async () => {
-        const resp = await request(server)
-            .get('/files/clouds.jpg');
-
-        expect(resp.status).toBe(200);
-
-        const cloudsJpgByteLength = 149667;
-        expect(resp.body instanceof Buffer).toBe(true);
-        expect((resp.body as Buffer).length).toBe(cloudsJpgByteLength);
     });
 
     it('can upload a file', async () => {
