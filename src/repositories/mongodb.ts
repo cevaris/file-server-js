@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb";
-import Secrets from "../secrets";
+import Config from "../config";
 
 export class MongoDB {
     static instance: MongoClient;
@@ -7,7 +7,7 @@ export class MongoDB {
     static async getInstance(): Promise<MongoClient> {
         if(!MongoDB.instance){
             const MongoDBOptions = { useUnifiedTopology: true };
-            MongoDB.instance = await MongoClient.connect(Secrets.MongoURI, MongoDBOptions);
+            MongoDB.instance = await MongoClient.connect(Config.MongoURI, MongoDBOptions);
         }
         return Promise.resolve(MongoDB.instance);
     }

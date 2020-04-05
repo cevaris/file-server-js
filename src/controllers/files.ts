@@ -16,7 +16,7 @@ module.exports = (app: express.Express) => {
                 mime_type: f.mimeType,
                 size_bytes: f.size
             }
-        })
+        });
 
         res.send({ files: filesJson });
     });
