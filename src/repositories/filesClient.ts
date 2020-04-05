@@ -1,10 +1,11 @@
-import { Collection, IndexOptions } from "mongodb";
+import { Collection, IndexOptions, UpdateOneOptions } from "mongodb";
 import { FileMetadata } from "../models/serverFile";
 import { MongoDB } from "./mongodb";
 
 interface FileMetadataRepository {
     all(): Promise<FileMetadata[]>
     insert(file: FileMetadata): Promise<void>
+    update(file: FileMetadata): Promise<void>
     delete(fileName: string): Promise<void>
 }
 
@@ -19,6 +20,14 @@ class FileMetadataRepositoryMongoDB implements FileMetadataRepository {
     async insert(file: FileMetadata): Promise<void> {
         const filesClient = await this.client();
         await filesClient.insertOne(file);
+    }
+
+    async update(file: FileMetadata): Promise<void> {
+        const filesClient = await this.client();
+        const query = { name: file.name };
+        const data = { $set: file };
+        const params: UpdateOneOptions = { upsert: true }
+        await filesClient.updateOne(query, data, params);
     }
 
     async delete(fileName: string): Promise<void> {
